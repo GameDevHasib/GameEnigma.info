@@ -1,5 +1,5 @@
 # GameEnigma.info
-Go Through These Steps To Run This Webpage:
+Go Through These Steps To Run This Webpage (Locally):
 1. Pull All The Files Into A Folder.
 2. Run Xampp Control Panal And Start Apache And MySQL.
 3. Import The "gameenigma.sql" File Into Xampp Server. (Create 'gameenigma' Database And Import The File)
