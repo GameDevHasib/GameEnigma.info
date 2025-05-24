@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>All Games - GameEnigma.io</title>
+    <link rel="stylesheet" href="Style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0f0f0f;
+            color: white;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #1c1c1c;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .search-bar {
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .container {
+            display: flex;
+            padding: 20px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-right: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+
+        .sidebar label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .sidebar .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .sidebar input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .games-list {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            transition: 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .game-icon {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: black;
+        }
+
+        .game-name {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">GameEnigma.io</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="allgamespage.html">All Games</a>
+            <a href="AboutUs.html">About Us</a>
+            <a href="ContactUs.html">Contact Us</a>
+        </nav>
+        <input type="text" id="searchInput" class="search-bar" placeholder="Search games...">
+    </header>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Filter Games</h3>
+
+            <label>Game Size</label>
+            <div class="filter-group" id="size-filter">
+                <input type="checkbox" value="small"> Below 10GB<br>
+                <input type="checkbox" value="medium"> 10GB - 30GB<br>
+                <input type="checkbox" value="large"> 30GB+<br>
+            </div>
+            <label>Ram Size</label>
+            <div class="filter-group" id="ram-filter">
+                <input type="checkbox" value="< 2 GB"> 2GB<br>
+                <input type="checkbox" value="< 4 GB"> 4GB<br>
+                <input type="checkbox" value="< 8 GB"> 8GB<br>
+                <input type="checkbox" value="< 16 GB"> 16GB<br>
+            </div>
+            <label>Genre</label>
+            <div class="filter-group" id="genre-filter">
+                <input type="checkbox" value="Adventure"> Adventure<br>
+                <input type="checkbox" value="Shooter"> Shooting<br>
+                <input type="checkbox" value="Action"> Action<br>
+                <input type="checkbox" value="Open world"> Open world<br>
+                <input type="checkbox" value="Role-Playing Game"> Role-Playing Game<br>
+            </div>
+        </div>
+
+        <div class="games-list" id="games-list">
+            <!-- Games will be injected here -->
+        </div>
+    </div>
+
+    <script>
+        let allGamesData = [];
+
+        async function fetchGames() {
+            const response = await fetch('http://127.0.0.1:5000/All-game-info');
+            const data = await response.json();
+            allGamesData = data;
+            return data;
+        }
+
+        function getCheckedValues(containerId) {
+            const checkboxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`);
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        function checkSizeMatch(sizeStr, filters) {
+            const size = parseFloat(sizeStr);
+            if (isNaN(size)) return false;
+
+            return filters.some(filter => {
+                switch (filter) {
+                    case 'small': return size < 10;
+                    case 'medium': return size >= 10 && size <= 30;
+                    case 'large': return size > 30;
+                    default: return false;
+                }
+            });
+        }
+
+        function checkRamMatch(sizeStr, filters) {
+            const size = parseFloat(sizeStr);
+            if (isNaN(size)) return false;
+
+            return filters.some(filter => {
+                switch (filter) {
+                    case '< 2 GB': return size <= 2 && size > 0;
+                    case '< 4 GB': return size <= 4 && size > 2;
+                    case '< 8 GB': return size <= 8 && size > 4;
+                    case '< 16 GB': return size <= 16 && size > 8;
+                    default: return false;
+                }
+            });
+        }
+
+        function checkGenreMatch(genreStr, filters) {
+            if (!genreStr || filters.length === 0) return false;
+            const genreLower = genreStr.toLowerCase();
+            return filters.some(filter => genreLower.includes(filter.toLowerCase()));
+        }
+
+        function filterGames(games, filters, searchQuery = '') {
+            return games.filter(game => {
+                const sizeMatch = filters.size.length === 0 || checkSizeMatch(game.GameSize, filters.size);
+                const ramsizeMatch = filters.ramsize.length === 0 || checkRamMatch(game.MinRAM, filters.ramsize);
+                const genreMatch = filters.genre.length === 0 || checkGenreMatch(game.Genres, filters.genre);
+                const nameMatch = game.GameName.toLowerCase().includes(searchQuery.toLowerCase());
+
+                return sizeMatch && ramsizeMatch && genreMatch && nameMatch;
+            });
+        }
+
+        function renderGames(games) {
+            const container = document.getElementById('games-list');
+            container.innerHTML = '';
+
+            if (games.length === 0) {
+                container.innerHTML = '<p style="grid-column: span 4; text-align: center;">No games found.</p>';
+                return;
+            }
+
+            const fallbackImage = 'Images/default-game-icon.png';
+
+            games.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.onclick = () => window.location.href = `web.html?gid=${game.GID}`;
+
+                card.innerHTML = `
+                    <img src="${game.GamePictureLink}" class="game-icon" onerror="this.src='${fallbackImage}'">
+                    <div class="game-name">${game.GameName}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function applyFilters() {
+            const filters = {
+                size: getCheckedValues('size-filter'),
+                ramsize: getCheckedValues('ram-filter'),
+                genre: getCheckedValues('genre-filter')
+            };
+            const searchQuery = document.getElementById('searchInput').value.trim();
+            const filteredGames = filterGames(allGamesData, filters, searchQuery);
+            renderGames(filteredGames);
+        }
+
+        // Event listeners
+        document.querySelectorAll('.sidebar input[type="checkbox"]').forEach(cb =>
+            cb.addEventListener('change', applyFilters)
+        );
+
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+        window.onload = async () => {
+            await fetchGames();
+            applyFilters();
+        };
+
+        function getSearchParam() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get("search") || "";
+        }
+
+window.onload = async () => {
+    await fetchGames();
+    const searchQuery = getSearchParam();
+    if (searchQuery) {
+        document.getElementById("searchInput").value = searchQuery;
+    }
+    applyFilters();
+};
+    
+    </script>
+</body>
+
+</html>

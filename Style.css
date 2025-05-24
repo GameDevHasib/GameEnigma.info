@@ -1,0 +1,178 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.main {
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.navbar {
+    width: 100%;
+    border-bottom: 3px solid #487bff ;
+}
+
+nav {
+    width: 95%;
+    margin: 1% auto 0;
+    display: contents;
+    align-items: center;
+    position: sticky;
+    z-index: 2;
+}
+
+.logo {
+    flex-basis: -15%;
+}
+
+.logo img {
+    width: 90px;
+
+}
+
+.nav-link {
+    flex: 1;
+    text-align: center;
+}
+
+.nav-link ul li {
+    display: inline-block;
+    list-style: none;
+    padding: 10px 2px;
+    margin: 0 40px;
+    position: relative;
+}
+
+.nav-link ul li a {
+    text-decoration: none;
+    font-size: 20px;
+    color:#fff;
+}
+
+.nav-link ul li::after {
+    content: '';
+    width: 100%;
+    height: 3px;
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.nav-link ul li:hover::after {
+    background: linear-gradient(to right, #fc72ff,#8f68ff,#487bff,#8f68ff,#fc72ff);
+}
+
+.active::after{
+    background: linear-gradient(to right, #fc72ff,#8f68ff,#487bff,#8f68ff,#fc72ff); !important;
+}
+
+.manu-icon{
+    flex-basis: 20%;
+}
+
+.manu-icon img{
+    width: 50px;
+    float: right;
+}
+
+.content{
+    width: 400px;
+    position: absolute;
+    top: 390px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 2;
+}
+
+.search-box{
+    margin-top: 50px;
+    border: 1px solid #fff;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to right, #fc72ff,#8f68ff,#487bff,#8f68ff,#fc72ff);
+}
+
+.search-box input{
+    width: 100%;
+    padding: 7px 15px;
+    border-radius: 30px;
+    border: 0;
+    outline: none;
+    background: solid;
+    color: #fff;
+}
+::placeholder{
+    color: #fff;
+}
+
+.search-box img{
+    width: 35px;
+    margin: 5px 10px;
+}
+
+.Slogun {
+    display: flex;
+    width: 700px;
+    top: 285px;    
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 2;
+    font-family: 'Poppins', sans-serif;
+    margin: auto;
+    font-size: 30px;
+    background: linear-gradient(to right, #fc72ff,#8f68ff,#487bff,#8f68ff,#fc72ff);
+    background-size: 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: animate-gradient 2.5s linear infinite;
+}
+
+@keyframes animate-gradient{
+    to{
+        background-position: 200%;
+    }
+}
+
+.Slogun h2{
+    margin: auto;
+    font-size: 30px;
+}
+
+.back-video{
+    position: absolute;
+    right: 0;
+    bottom: 0; 
+    z-index: -1;
+}
+
+@media (min-aspect-ratio:16/9){
+    .back-video{
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-aspect-ratio:16/9){
+    .back-video{
+        width: auto;
+        height: 100%;
+    }
+}
+
+
+
+
+
+
+
+
+
