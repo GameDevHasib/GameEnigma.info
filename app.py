@@ -10,8 +10,7 @@ from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, urljoin
 from time import sleep
 import re
 from playwright.sync_api import sync_playwright
-import os
-import asyncio
+
 
 
 
@@ -19,8 +18,6 @@ import asyncio
 app = Flask(__name__)
 app.secret_key = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
 CORS(app)
-#SEARCH1API_KEY = "28811D8D-891E-496F-BD9D-ABD6430DD96F"
-#SEARCH1API_KEY = "156002FF-4EAC-46BA-9BF7-1C63960DB079"
 SEARCH1API_KEY = ""
 SEARCH1API_URL = "https://api.search1api.com/search"
 #IPSTACK_KEY = "b3ac539a3982e92086aca92c671cf91c"
