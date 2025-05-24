@@ -18,7 +18,7 @@ from playwright.sync_api import sync_playwright
 app = Flask(__name__)
 app.secret_key = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
 CORS(app)
-SEARCH1API_KEY = ""
+SEARCH1API_KEY = "" #20 request per day
 SEARCH1API_URL = "https://api.search1api.com/search"
 #IPSTACK_KEY = "b3ac539a3982e92086aca92c671cf91c"
 IPSTACK_KEY = "0f427197b46ab64fe57aa0166ae9689d"
