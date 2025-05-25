@@ -2,119 +2,9 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameEnigma.io</title>
     <link rel="Stylesheet" href="Style.css">
-    <style>
-        /* Enhanced game container styling */
-        .games-container {
-            margin-top: 30px;
-            padding: 20px;
-            overflow-x: auto;
-            white-space: nowrap;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 15px;
-            max-width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* Improved game scroll behavior */
-        .games-scroll {
-            display: inline-block;
-            margin: 0 auto;
-            padding: 10px 0;
-        }
-        
-        /* Enhanced game card with better hover effects */
-        .game-card {
-            display: inline-block;
-            width: 160px;
-            margin: 0 15px;
-            text-align: center;
-            vertical-align: top;
-            white-space: normal;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            padding: 10px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .game-card:hover {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
-        }
-        
-        /* Improved game icon styling */
-        .game-icon {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .game-card:hover .game-icon {
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        /* Enhanced game name styling */
-        .game-name {
-            margin-top: 12px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .game-card:hover .game-name {
-            color: #4facfe;
-        }
-        
-        /* Scrollbar styling (hidden but functional) */
-        .games-container::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .games-container {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        
-        /* Section title enhancements */
-        .section-title {
-            color: white;
-            font-size: 28px;
-            margin-bottom: 25px;
-            text-align: center;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
-            position: relative;
-            display: inline-block;
-            padding-bottom: 10px;
-        }
-        
-        .section-title:after {
-            content: '';
-            position: absolute;
-            width: 50%;
-            height: 3px;
-            bottom: 0;
-            left: 25%;
-            background: linear-gradient(90deg, transparent, #4facfe, transparent);
-            border-radius: 3px;
-        }
-        
-        /* Search box container adjustment */
-        .content {
-            margin-bottom: 30px;
-        }
-    </style>
 </head>
 
 <body>
@@ -124,18 +14,12 @@
                 <source src="Images/background%20-%20Made%20with%20Clipchamp.mp4" type="video/mp4">
             </video>
             <nav>
-                <div class="manu-icon">
-                    <img src="Images/7124209_menu_icon.png">
-                </div>
-                <div class="logo">
-                    <img src="Images/logo.PNG">
-                </div>
                 <div class="nav-link">
                     <ul>
-                        <li class="active"><b><a href="#">HOME</a></b></li>
+                        <li class="active"><b><a href="Index.html">HOME</a></b></li>
                         <li><b><a href="allgamespage.html">POPULAR GAMES</a></b></li>
-                        <li><b><a href="ContactUs.html">CONTACT US</a></b></li>
-                        <li><b><a href="#">ABOUT US</a></b></li>
+                        <li><b><a href="#">CONTACT US</a></b></li>
+                        <li><b><a href="AboutUSPage.html">ABOUT US</a></b></li>
                     </ul>
                 </div>
             </nav>
@@ -144,32 +28,33 @@
             <h1>Find Your Favourite Games Here</h1>
         </div>
         <div class="content">
-            <div class="search-box">
-                <input type="text" id="searchHome" placeholder="search...">
-                <button id="searchButton"><img src="Images/search.png" onclick="doSearch()"></button> 
-            </div>
+            <form class="search-box" onsubmit="event.preventDefault(); doSearch();">
+                <input id="searchHome" type="text" placeholder="search..." name="q">
+                <button id="searchButton" type="submit">
+                    <img src="Images/search.png">
+                </button>
+            </form>
         </div>
-        
     </div>
-    
+
     <script>
-    const searchInput = document.getElementById("searchHome");
-    const searchButton = document.getElementById("searchButton");
+        const searchInput = document.getElementById("searchHome");
+        const searchButton = document.getElementById("searchButton");
 
-    function doSearch() {
-        const query = encodeURIComponent(searchInput.value.trim());
-        if (query) {
-            window.location.href = `allgamespage.html?search=${query}`;
+        function doSearch() {
+            const query = encodeURIComponent(searchInput.value.trim());
+            if (query) {
+                window.location.href = `allgamespage.html?search=${query}`;
+            }
         }
-    }
 
-    searchInput.addEventListener("keypress", function (e) {
-        if (e.key === "Enter") {
-            doSearch();
-        }
-    });
+        searchInput.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                doSearch();
+            }
+        });
 
-    searchButton.addEventListener("click", doSearch);
+        searchButton.addEventListener("click", doSearch);
     </script>
 </body>
 

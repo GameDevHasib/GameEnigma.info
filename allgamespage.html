@@ -3,160 +3,97 @@
 
 <head>
     <title>All Games - GameEnigma.io</title>
-    <link rel="stylesheet" href="Style.css">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f0f0f;
-            color: white;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background-color: #1c1c1c;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: bold;
-            color: #4facfe;
-        }
-
-        nav a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .search-bar {
-            padding: 6px 10px;
-            border-radius: 5px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-            width: 200px;
-        }
-
-        .container {
-            display: flex;
-            padding: 20px;
-        }
-
-        .sidebar {
-            width: 250px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 20px;
-            margin-right: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            height: fit-content;
-        }
-
-        .sidebar h3 {
-            color: #4facfe;
-            margin-bottom: 10px;
-        }
-
-        .sidebar label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .sidebar .filter-group {
-            margin-bottom: 15px;
-        }
-
-        .sidebar input[type="checkbox"] {
-            margin-right: 5px;
-        }
-
-        .games-list {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 20px;
-        }
-
-        .game-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            transition: 0.3s;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .game-card:hover {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .game-icon {
-            width: 100%;
-            height: 180px;
-            object-fit: contain;
-            border-radius: 8px;
-            background: black;
-        }
-
-        .game-name {
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="allgamespage.css">
 </head>
+<div class="background-blur"></div>
 
 <body>
-    <header>
-        <div class="logo">GameEnigma.io</div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="allgamespage.html">All Games</a>
-            <a href="AboutUs.html">About Us</a>
-            <a href="ContactUs.html">Contact Us</a>
-        </nav>
-        <input type="text" id="searchInput" class="search-bar" placeholder="Search games...">
-    </header>
 
+    <header>
+        <nav>
+            <div class="nav-link">
+                <ul>
+                    <li class="active"><b><a href="Index.html">HOME</a></b></li>
+                    <li><b><a href="allgamespage.html">POPULAR GAMES</a></b></li>
+                    <li><b><a href="#">CONTACT US</a></b></li>
+                    <li><b><a href="AboutUSPage.html">ABOUT US</a></b></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <div class="search-bar-div">
+        <input type="text" id="searchInput" class="search-bar" placeholder="Search games...">
+    </div>
     <div class="container">
         <div class="sidebar">
-            <h3>Filter Games</h3>
+            <h1>Filter Games</h1>
 
-            <label>Game Size</label>
+            <label class="lebel">
+                <h2>Game Size</h2>
+            </label>
             <div class="filter-group" id="size-filter">
-                <input type="checkbox" value="small"> Below 10GB<br>
-                <input type="checkbox" value="medium"> 10GB - 30GB<br>
-                <input type="checkbox" value="large"> 30GB+<br>
+                <div class="filter-option">
+                    <input type="checkbox" value="small">
+                    <p>Below 10GB</p>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" value="medium">
+                    <p>10GB - 30GB</p>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" value="large">
+                    <p>30GB+</p>
+                </div>
             </div>
-            <label>Ram Size</label>
+            <label class="lebel">
+                <h2>Ram Size</h2>
+            </label>
             <div class="filter-group" id="ram-filter">
-                <input type="checkbox" value="< 2 GB"> 2GB<br>
-                <input type="checkbox" value="< 4 GB"> 4GB<br>
-                <input type="checkbox" value="< 8 GB"> 8GB<br>
-                <input type="checkbox" value="< 16 GB"> 16GB<br>
+                <div class="filter-option">
+                    <input type="checkbox" value="< 2 GB">
+                    <p>2GB</p>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" value="< 4 GB">
+                    <p>4GB</p>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" value="< 8 GB">
+                    <p>8GB</p>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" value="< 16 GB">
+                    <p>16GB</p>
+                </div>
             </div>
-            <label>Genre</label>
+            <label class="lebel">
+                <h2>Genre</h2>
+            </label>
             <div class="filter-group" id="genre-filter">
-                <input type="checkbox" value="Adventure"> Adventure<br>
-                <input type="checkbox" value="Shooter"> Shooting<br>
-                <input type="checkbox" value="Action"> Action<br>
-                <input type="checkbox" value="Open world"> Open world<br>
-                <input type="checkbox" value="Role-Playing Game"> Role-Playing Game<br>
+                <div class="filter-option">
+                    <input type="checkbox" value="Adventure">
+                    <p>Adventure</p>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" value="Shooter">
+                    <p>Shooter</p>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" value="Action">
+                    <p>Action</p>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" value="Open world">
+                    <p>Open world</p>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" value="Role-Playing Game">
+                    <p>Role-Playing Game</p>
+                </div>
             </div>
         </div>
 
         <div class="games-list" id="games-list">
-            <!-- Games will be injected here -->
         </div>
     </div>
 
@@ -181,10 +118,14 @@
 
             return filters.some(filter => {
                 switch (filter) {
-                    case 'small': return size < 10;
-                    case 'medium': return size >= 10 && size <= 30;
-                    case 'large': return size > 30;
-                    default: return false;
+                    case 'small':
+                        return size < 10;
+                    case 'medium':
+                        return size >= 10 && size <= 30;
+                    case 'large':
+                        return size > 30;
+                    default:
+                        return false;
                 }
             });
         }
@@ -195,11 +136,16 @@
 
             return filters.some(filter => {
                 switch (filter) {
-                    case '< 2 GB': return size <= 2 && size > 0;
-                    case '< 4 GB': return size <= 4 && size > 2;
-                    case '< 8 GB': return size <= 8 && size > 4;
-                    case '< 16 GB': return size <= 16 && size > 8;
-                    default: return false;
+                    case '< 2 GB':
+                        return size <= 2 && size > 0;
+                    case '< 4 GB':
+                        return size <= 4 && size > 2;
+                    case '< 8 GB':
+                        return size <= 8 && size > 4;
+                    case '< 16 GB':
+                        return size <= 16 && size > 8;
+                    default:
+                        return false;
                 }
             });
         }
@@ -273,16 +219,16 @@
             return params.get("search") || "";
         }
 
-window.onload = async () => {
-    await fetchGames();
-    const searchQuery = getSearchParam();
-    if (searchQuery) {
-        document.getElementById("searchInput").value = searchQuery;
-    }
-    applyFilters();
-};
-    
+        window.onload = async () => {
+            await fetchGames();
+            const searchQuery = getSearchParam();
+            if (searchQuery) {
+                document.getElementById("searchInput").value = searchQuery;
+            }
+            applyFilters();
+        };
     </script>
+
 </body>
 
 </html>

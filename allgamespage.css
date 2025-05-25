@@ -1,0 +1,264 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.background-blur {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(Images/allgamesbackgound.jpg);
+    background-size: cover;
+    background-position: center;
+    filter: blur(5px);
+    z-index: -2;
+}
+
+.background-blur::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+header {
+    height: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #1c1c1c;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+    background: transparent;
+    position: relative;
+    z-index: 1;
+}
+
+nav {
+    width: 95%;
+    margin: 1% auto 0;
+    display: contents;
+    align-items: center;
+    position: sticky;
+    z-index: 2;
+}
+
+.nav-link {
+    flex: 1;
+    text-align: center;
+}
+
+.nav-link ul li {
+    left: 1px;
+    display: inline-block;
+    list-style: none;
+    padding: 10px 2px;
+    margin: 0 40px;
+    position: relative;
+}
+
+.nav-link ul li a {
+    text-decoration: none;
+    font-size: 20px;
+    color: #fff;
+}
+
+.nav-link ul li::after {
+    content: '';
+    width: 100%;
+    height: 3px;
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.nav-link ul li:hover::after {
+    background: linear-gradient(to right, #fc72ff, #8f68ff, #487bff, #8f68ff, #fc72ff);
+}
+
+.active::after {
+    background: linear-gradient(to right, #fc72ff, #8f68ff, #487bff, #8f68ff, #fc72ff);
+     !important;
+}
+
+.search-bar-div {
+    width: 0px;
+    top: -5px;
+    padding-left: 1700px;
+    transform: translateX(-50%);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.search-bar {
+    position: static;
+    padding: 10px 75px;
+    outline: none;
+    font-size: 15px;
+    width: 130px;
+    border-radius: 30px;
+    border: 0;
+    outline: none;
+    background: solid;
+    color: #99CCFF;
+    margin-top: 50px;
+    border: 1px solid #99CCFF;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+}
+
+.container {
+    top: 20px;
+    display: flex;
+    padding: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar {
+    width: 250px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+    margin-right: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    height: fit-content;
+}
+
+.sidebar h1 {
+    color: #99CCFF;
+    margin-bottom: 10px;
+}
+
+.sidebar label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.sidebar .filter-group {
+    margin-bottom: 50px;
+}
+
+.sidebar input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.games-list {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+}
+
+.game-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 240px;
+}
+
+.game-card:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.game-icon {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: black;
+}
+
+.game-name {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #99CCFF;
+}
+
+input[type="checkbox"] {
+    position: relative;
+    width: 30px;
+    height: 15px;
+    -webkit-appearance: none;
+    background: #c6c6c6;
+    outline: none;
+    border-radius: 20px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, .2);
+    transition: .5s;
+}
+
+input:checked[type="checkbox"] {
+    background: #03a9f4;
+}
+
+input[type="checkbox"]:before {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 20px;
+    top: 0;
+    left: 0;
+    background: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+    transition: .5s;
+
+}
+
+input:checked[type="checkbox"]:before {
+    left: 15px;
+}
+
+.lebel {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #99CCFF;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.filter-option p {
+    margin: 0;
+    color: #fff;
+    font-size: 14px;
+}
+
+
+
+
+
+
+
+

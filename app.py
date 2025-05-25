@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session, render_template
+from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 import mysql.connector
 import requests
@@ -14,14 +14,16 @@ from playwright.sync_api import sync_playwright
 
 
 
-
 app = Flask(__name__)
 app.secret_key = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
 CORS(app)
-SEARCH1API_KEY = "" #20 request per day
+#SEARCH1API_KEY = "28811D8D-891E-496F-BD9D-ABD6430DD96F"
+#SEARCH1API_KEY = "156002FF-4EAC-46BA-9BF7-1C63960DB079"
+SEARCH1API_KEY = ""
 SEARCH1API_URL = "https://api.search1api.com/search"
 #IPSTACK_KEY = "b3ac539a3982e92086aca92c671cf91c"
 IPSTACK_KEY = "0f427197b46ab64fe57aa0166ae9689d"
+
 
 db = mysql.connector.connect(
     host="localhost",
@@ -32,6 +34,7 @@ db = mysql.connector.connect(
 cursor = db.cursor(dictionary=True)
 
 def get_user_region():
+    """Detects the user's region using the ipstack API."""
     try:
         response = requests.get(f"http://api.ipstack.com/check?access_key={IPSTACK_KEY}")
         data = response.json()
@@ -44,6 +47,7 @@ def get_user_region():
         return "Unknown"
 
 def make_api_request(url, headers, payload, max_retries=3):
+    """Handles API requests with retry logic"""
     for attempt in range(max_retries):
         try:
             response = requests.post(url, headers=headers, json=payload)
@@ -59,12 +63,13 @@ def make_api_request(url, headers, payload, max_retries=3):
     return response
 
 def get_top_stores(region):
+    """Get top 3 hardware store links using Search1API"""
     query = f"top online computer hardware store in {region}" if region != "Unknown" else "top online computer hardware store"
 
     payload = {
         "query": query,
         "search_service": "google",
-        "max_results": 2,
+        "max_results": 1,
         "language": "en"
     }
     excluded_domains = [
@@ -85,6 +90,8 @@ def get_top_stores(region):
                 if store_url:
                     parsed = urlparse(store_url)
                     domain = parsed.netloc.replace("www.", "").lower()
+
+                    # Skip excluded domains
                     if any(excluded in domain for excluded in excluded_domains):
                         continue
                     clean_url = urlparse(store_url)._replace(query=None).geturl()
@@ -114,7 +121,7 @@ def get_next_higher_component_name(component_type, current_score):
         ORDER BY {column} ASC
         LIMIT 1
     """
-    cursor.execute(query, (current_score,))
+    cursor.execute("SELECT {name_column}, {column} FROM {table} WHERE {column} > %s ORDER BY {column} ASC LIMIT 1 ", (current_score,))
     print(f"query: {query}")
     row = cursor.fetchone()
     print(f"next component: {row}")
@@ -141,9 +148,9 @@ def search_product_on_store(store_url, product_name, component_type):
             ram_size = 32
             busspeed = 3600
         payload = {
-            "query": f"site:{domain} {ram_size} GB DDR4 {busspeed} MHz Desktop RAM buy in stock available",
+            "query": f"site:{domain} {ram_size} GB DDR4 {busspeed} MHz Desktop RAM",
             "search_service": "google",
-            "max_results": 5,
+            "max_results": 1,
             "language": "en"
         }
 
@@ -214,12 +221,14 @@ def search_product_on_store(store_url, product_name, component_type):
                     print(f"❌ No results for {current_name}")
             except Exception as e:
                 print(f"❌ Exception during search: {str(e)}")
+
+            # Fallback to next better component
             try:
                 cursor.execute(f"SELECT {score_column} FROM {table} WHERE {name_column} = %s", (current_name,))
                 row = cursor.fetchone()
                 print(f"row {row}")
                 if not row:
-                    break  
+                    break  # No score found
 
                 current_score = row[score_column]
                 print(f"Current Score: {current_score}")
@@ -253,9 +262,9 @@ def search_parts_for_top_stores(region, cpu_name, gpu_name, ram_name):
     for store in stores:
         print(f"\n🏬 Searching products on: {store}")
         products = {
-            "CPU": search_product_on_store(store, cpu_name, "GPU"), 
-            "GPU": search_product_on_store(store, gpu_name, "CPU"), 
-            "RAM": search_product_on_store(store, ram_name, "ram") 
+            "CPU": search_product_on_store(store, cpu_name, "GPU"), #CPU link
+            "GPU": search_product_on_store(store, gpu_name, "CPU"), #GPU link
+            "RAM": search_product_on_store(store, ram_name, "ram") #RAM link
         }
         store_name = extract_store_name(store) 
         store_product_links[store_name] = products
@@ -269,8 +278,9 @@ def scrape_price_from_page(url):
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         page.goto(url)
-        page.wait_for_timeout(3000) 
+        page.wait_for_timeout(3000)  # wait for JS-rendered content
 
+        # Try common price selectors
         selectors = [
             ".product-price label",
             ".product-price span",
@@ -285,12 +295,18 @@ def scrape_price_from_page(url):
             elements = page.query_selector_all(selector)
             for el in elements:
                 text = el.inner_text().strip()
+
+                # Skip crossed-out text
                 if el.evaluate("e => e.tagName.toLowerCase()") == "del":
                     continue
+
+                # Use regex to find something that looks like a price
                 match = re.search(r"\d{1,3}(,\d{3})*(৳)?", text)
                 if match:
                     price_str = match.group(0)
                     print(f"💬 Found price string: {price_str}")
+
+                    # Clean it up
                     cleaned_price = float(price_str.replace(",", "").replace("৳", ""))
                     print(f"✅ Final cleaned price: {cleaned_price}")
                     return cleaned_price
@@ -471,53 +487,60 @@ def check_compatibility():
 @app.route('/get-basic-parts', methods=['GET'])
 def get_basic_parts():
     gid = request.args.get('gid', type=int)
+    # Fetch the first system requirement entry for the given GID
     cursor.execute("SELECT * FROM systemrequirement WHERE GID = %s LIMIT 1", (gid,))
-    sysreq = cursor.fetchone() 
+    sysreq = cursor.fetchone()  # Fetch only one row for the given GID
     cursor.execute("SELECT MinRAM FROM gameinfo WHERE GID = %s", (gid,))
     minram= cursor.fetchone()
-    region= get_user_region()
+    #region= get_user_region()
     print("Starting....")
     if sysreq:
+        # Fetch the CPU names based on the mincpu and maxcpu for the entry
         cursor.execute("SELECT CpuName FROM cpuinfo WHERE CpuID = %s", (sysreq['Mincpu'],))
-        min_cpu = cursor.fetchone()  
+        min_cpu = cursor.fetchone()  # Fetch min CPU name
         print("min cpu :")
         cursor.execute("SELECT CpuName FROM cpuinfo WHERE CpuID = %s", (sysreq['Maxcpu'],))
-        max_cpu = cursor.fetchone()  
+        max_cpu = cursor.fetchone()  # Fetch max CPU name
+        # Fetch the GPU names based on the mingpu and maxgpu for the entry
         cursor.execute("SELECT GpuName FROM gpuinfo WHERE GpuID = %s", (sysreq['Mingpu'],))
-        min_gpu = cursor.fetchone()  
+        min_gpu = cursor.fetchone()  # Fetch min GPU name
         cursor.execute("SELECT GpuName FROM gpuinfo WHERE GpuID = %s", (sysreq['Maxgpu'],))
-        max_gpu = cursor.fetchone() 
+        max_gpu = cursor.fetchone()  # Fetch max GPU name
         print("starting search")
         min_cpu_name = min_cpu['CpuName'] if min_cpu else ''
         min_gpu_name = min_gpu['GpuName'] if min_gpu else ''
         min_ram_size = minram['MinRAM'] if minram else ''
-        Productlinks=search_parts_for_top_stores(region,min_cpu_name,min_gpu_name,min_ram_size)
+        #Productlinks=search_parts_for_top_stores(region,min_cpu_name,min_gpu_name,min_ram_size)
         
-        product_list = [
-            {
-                'store': store,
-                'CPU': parts['CPU'],
-                'GPU': parts['GPU'],
-                'RAM': parts['RAM']
-            } for store, parts in Productlinks.items()
-        ]
-        #product_list = [{'store': 'Startech', 
-        #                 'CPU': 'https://www.startech.com.bd/amd-ryzen-5-5600g-processor', 
-        #                 'GPU': 'https://www.startech.com.bd/colorful-geforce-rtx-3060-nb-duo-12g-v2-lv-graphics-card', 
-        #                 'RAM': 'https://www.startech.com.bd/g-skill-trident-z-neo-rgb-8gb-desktop-ram'},
-        #                {'store': 'Ryans', 
-        #                 'CPU': 'https://www.ryans.com/amd-ryzen-5-5600g-desktop-processor', 
-        #                 'GPU': 'https://www.ryans.com/zotac-gaming-geforce-rtx-3060-twin-edge-12gb-gddr6-graphics-card', 
-        #                 'RAM': 'https://www.ryans.com/adata-xpg-spectrix-d35g-rgb-8gb-ddr4-3600mhz-black-gaming-desktop-ram'}]
+        
+        # Return the system requirement details for this single entry
+        #product_list = [
+        #    {
+        #        'store': store,
+        #        'CPU': parts['CPU'],
+        #        'GPU': parts['GPU'],
+        #        'RAM': parts['RAM']
+        #    } for store, parts in Productlinks.items()
+        #]
+        product_list = [{'store': 'Startech', 
+                         'CPU': 'https://www.startech.com.bd/amd-ryzen-5-5600g-processor', 
+                         'GPU': 'https://www.startech.com.bd/colorful-geforce-rtx-3060-nb-duo-12g-v2-lv-graphics-card', 
+                         'RAM': 'https://www.startech.com.bd/g-skill-trident-z-neo-rgb-8gb-desktop-ram'},
+                        {'store': 'Ryans', 
+                         'CPU': 'https://www.ryans.com/amd-ryzen-5-5600g-desktop-processor', 
+                         'GPU': 'https://www.ryans.com/zotac-gaming-geforce-rtx-3060-twin-edge-12gb-gddr6-graphics-card', 
+                         'RAM': 'https://www.ryans.com/adata-xpg-spectrix-d35g-rgb-8gb-ddr4-3600mhz-black-gaming-desktop-ram'}]
         print(f"{product_list}")
+
         return jsonify({'Productlinks': product_list})
+    
     else:
         return jsonify({'error': 'No system requirements found for the provided GID'})
 
 
 def extract_best_image_from_name(page, product_name):
     all_images = page.query_selector_all("img")
-    product_name_keywords = re.findall(r'\w+', product_name.lower())  
+    product_name_keywords = re.findall(r'\w+', product_name.lower())  # Split into lowercase keywords
 
     best_match = ""
     highest_match_count = 0
@@ -525,9 +548,14 @@ def extract_best_image_from_name(page, product_name):
     for img in all_images:
         src = img.get_attribute("src")
         if not src or "data:image" in src:
-            continue 
+            continue  # Skip inline/base64 images
+
         src_lower = src.lower()
+
+        # Count how many keywords from the product name appear in the image URL
         match_count = sum(1 for word in product_name_keywords if word in src_lower)
+
+        # Prefer images with at least one name match
         if match_count > highest_match_count:
             highest_match_count = match_count
             best_match = src
@@ -542,6 +570,7 @@ def extract_best_image_from_name(page, product_name):
 
 def scrape_product(url):
     def extract_price(page):
+        # Try common price selectors
         selectors = [
             ".product-price label",
             ".product-price span",
@@ -556,12 +585,18 @@ def scrape_product(url):
             elements = page.query_selector_all(selector)
             for el in elements:
                 text = el.inner_text().strip()
+
+                # Skip crossed-out text
                 if el.evaluate("e => e.tagName.toLowerCase()") == "del":
                     continue
+
+                # Use regex to find something that looks like a price
                 match = re.search(r"\d{1,3}(,\d{3})*(৳)?", text)
                 if match:
                     price_str = match.group(0)
                     print(f"💬 Found price string: {price_str}")
+
+                    # Clean it up
                     cleaned_price = float(price_str.replace(",", "").replace("৳", ""))
                     print(f"✅ Final cleaned price: {cleaned_price}")
                     return f"{cleaned_price}৳"
@@ -575,15 +610,23 @@ def scrape_product(url):
         try:
             page.goto(url, timeout=15000)
             page.wait_for_load_state("networkidle")
+
+            # Generic scraping (customize as needed per store)
             name = page.title()
+
+            # Try to get image
             image = extract_best_image_from_name(page,name)
+
+            # Call the embedded price scraping function
             price = extract_price(page)
+
         except Exception as e:
             name = "Failed to fetch product"
             image = ""
             price = str(e)
         finally:
             browser.close()
+
     return {
         "name": name,
         "image": image,

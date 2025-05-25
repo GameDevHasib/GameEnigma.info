@@ -1,120 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Game Compatibility Checker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    #game-info, #requirements, #result {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    input[type="text"], input[type="number"] {
-      padding: 5px;
-      width: 300px;
-    }
-    button {
-      margin-top: 15px;
-      padding: 10px 15px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    #compatibilityChart {
-      margin-top: 40px;
-    }
-
-    .store-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-
-.store-box {
-    width: 150px;
-    height: 150px;
-    border: 2px solid #000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 10px;
-    box-sizing: border-box;
-    border-radius: 10px;
-    background-color: #f4f4f4;
-}
-
-.store-box button {
-    margin-top: 10px;
-    padding: 5px 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.store-box button:hover {
-    background-color: #45a049;
-}
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Compatibility Checker</title>
+    <link rel="Stylesheet" href="web.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<div class="background-blur"></div>
+
 <body>
+    <header>
+        <nav>
+            <div class="nav-link">
+                <ul>
+                    <li class="active"><b><a href="Index.html">HOME</a></b></li>
+                    <li><b><a href="allgamespage.html">POPULAR GAMES</a></b></li>
+                    <li><b><a href="#">CONTACT US</a></b></li>
+                    <li><b><a href="AboutUSPage.html">ABOUT US</a></b></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-  <h2>🎮 Game Info</h2>
-  <div id="game-info">Loading game info...</div>
-  <div id="requirements" style="display:none;"></div>
-  <h3>🖥️ Check Your System</h3>
-  <label for="cpu">Enter CPU:</label>
-  <input list="cpuList" id="cpu" oninput="searchCPU(this.value)">
-  <datalist id="cpuList"></datalist>
-  <label for="gpu">Enter GPU:</label>
-  <input list="gpuList" id="gpu" oninput="searchGPU(this.value)">
-  <datalist id="gpuList"></datalist>
-  <label for="ram">Enter RAM (GB):</label>
-  <input type="number" id="ram" min="1">
-  <button onclick="checkCompatibility()">Check Compatibility</button>
-  <div id="result"></div>
-  <canvas id="compatibilityChart" width="400" height="200"></canvas>
-  <div id="product-suggestions"></div>
-  <pre id="result" style="white-space: pre-wrap; background: #f9f9f9; padding: 10px;"></pre>
+    <h2>🎮 Game Info</h2>
+    <div id="game-info">Loading game info...</div>
+    <div id="requirements" style="display:none;"></div>
+
+    <h3>🖥️ Check Your System</h3>
+    <label class="label" for="cpu">Enter CPU:</label>
+    <input list="cpuList" id="cpu" oninput="searchCPU(this.value)">
+    <datalist id="cpuList"></datalist>
+
+    <label class="label" for="gpu">Enter GPU:</label>
+    <input list="gpuList" id="gpu" oninput="searchGPU(this.value)">
+    <datalist id="gpuList"></datalist>
+
+    <label class="label" for="ram">Enter RAM (GB):</label>
+    <input type="number" id="ram" min="1">
+
+    <button onclick="checkCompatibility()">Check Compatibility</button>
+    <div id="result"></div>
+    <canvas id="compatibilityChart" width="400" height="200" style="background-color: #1e1e1e;"></canvas>
+    <div id="product-suggestions"></div>
+    <pre id="result" style="white-space: pre-wrap;"></pre>
 
 
+    <script>
+        async function loadGameInfo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const gid = urlParams.get('gid');
 
-  <script>
-    async function loadGameInfo() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const gid = urlParams.get('gid');
-    
-      const res = await fetch(`http://127.0.0.1:5000/game-info?gid=${gid}`);
-      const game = await res.json();
-      
-    
-      document.getElementById('game-info').innerHTML = `
-        <div style="display: flex; align-items: flex-start; gap: 10px;">
+            const res = await fetch(`http://127.0.0.1:5000/game-info?gid=${gid}`);
+            const game = await res.json();
+
+
+            document.getElementById('game-info').innerHTML = `
+        <div style="display: flex; align-items: flex-start; gap: 50px;">
           <!-- Game Cover Image -->
-          <img src="${game.GamePictureLink}" alt="Game Cover" style="width: 150px; height: 150px; border-radius: 10px;">
+          <img src="${game.GamePictureLink}" alt="Game Cover" style="width: 170px; height: 170px; border-radius: 9px;margin-left: 35px;">
           <!-- Game Details -->
           <div style="flex: 1;">
-            <strong style="font-size: 24px;">${game.GameName}</strong><br> 
+            <strong style="font-size: 30px;">${game.GameName}</strong><br> 
             Release: ${game.ReleaseDate}<br> 
             Platform: ${game.Platform}<br> 
             Genre: ${game.Genres}<br> 
@@ -134,28 +82,28 @@
         </div>
         <div style="margin-top: 30px;">
           <h4>🎮 Gameplay Previews</h4>
-          <div style="display: flex; gap: 15px;">
-            ${game.InGameImageLink1 ? `<img src="${game.InGameImageLink1}" alt="Gameplay 1" style="width: 250px; border-radius: 10px;">` : ''}
-            ${game.InGameImageLink2 ? `<img src="${game.InGameImageLink2}" alt="Gameplay 2" style="width: 250px; border-radius: 10px;">` : ''}
-            ${game.InGameImageLink3 ? `<img src="${game.InGameImageLink3}" alt="Gameplay 3" style="width: 250px; border-radius: 10px;">` : ''}
+          <div style="display: flex; gap: 5px;">
+            ${game.InGameImageLink1 ? `<img src="${game.InGameImageLink1}" alt="Gameplay 1" style="width: 350px; border-radius: 10px;">` : ''}
+            ${game.InGameImageLink2 ? `<img src="${game.InGameImageLink2}" alt="Gameplay 2" style="width: 350px; border-radius: 10px;">` : ''}
+            ${game.InGameImageLink3 ? `<img src="${game.InGameImageLink3}" alt="Gameplay 3" style="width: 350px; border-radius: 10px;">` : ''}
           </div>
         </div>
       `;
-      showRequirements();
-    }
+            showRequirements();
+        }
 
-    async function showRequirements() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const gid = urlParams.get('gid');
-    
-      const res = await fetch(`http://127.0.0.1:5000/system-requirements?gid=${gid}`);
-      const data = await res.json();
-      const res1 = await fetch(`http://127.0.0.1:5000/game-info?gid=${gid}`);
-      const game = await res1.json();
+        async function showRequirements() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const gid = urlParams.get('gid');
 
-      document.getElementById('requirements').style.display = 'block';
-      document.getElementById('requirements').innerHTML = ` 
-        <div style="display: flex; gap: 40px;">
+            const res = await fetch(`http://127.0.0.1:5000/system-requirements?gid=${gid}`);
+            const data = await res.json();
+            const res1 = await fetch(`http://127.0.0.1:5000/game-info?gid=${gid}`);
+            const game = await res1.json();
+
+            document.getElementById('requirements').style.display = 'block';
+            document.getElementById('requirements').innerHTML = ` 
+        <div style="display: flex; gap: 400px; margin-left: 25px;">
           <div>
             <h4>🛠️ Minimum Requirements</h4> 
             <ul>
@@ -176,224 +124,324 @@
           </div>
         </div>
       `;
-    }
+        }
 
-    async function searchCPU(query) {
-      const res = await fetch(`http://127.0.0.1:5000/cpu-search?q=${query}`);
-      const list = await res.json();
-      const datalist = document.getElementById('cpuList');
-      datalist.innerHTML = list.map(cpu => `<option value="${cpu}">`).join('');
-    }
+        async function searchCPU(query) {
+            const res = await fetch(`http://127.0.0.1:5000/cpu-search?q=${query}`);
+            const list = await res.json();
+            const datalist = document.getElementById('cpuList');
+            datalist.innerHTML = list.map(cpu => `<option value="${cpu}">`).join('');
+        }
 
-    async function searchGPU(query) {
-      const res = await fetch(`http://127.0.0.1:5000/gpu-search?q=${query}`);
-      const list = await res.json();
-      const datalist = document.getElementById('gpuList');
-      datalist.innerHTML = list.map(gpu => `<option value="${gpu}">`).join('');
-    }
+        async function searchGPU(query) {
+            const res = await fetch(`http://127.0.0.1:5000/gpu-search?q=${query}`);
+            const list = await res.json();
+            const datalist = document.getElementById('gpuList');
+            datalist.innerHTML = list.map(gpu => `<option value="${gpu}">`).join('');
+        }
 
-    async function checkCompatibility() {
-      const cpu = document.getElementById('cpu').value;
-      const gpu = document.getElementById('gpu').value;
-      const ram = document.getElementById('ram').value;
-      const urlParams = new URLSearchParams(window.location.search);
-      const gid = urlParams.get('gid');
-    
-      if (!cpu || !gpu || !ram) {
-        alert("Please fill in all fields.");
-        return;
-      }
-    
-      const res = await fetch('http://127.0.0.1:5000/check-compatibility', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cpu, gpu, ram, gid: parseInt(gid) })
-      });
-    
-      const result = await res.json();
-      const message = result.compatible 
-        ? "✅ Your system can run the game!" 
-        : "❌ Your system doesn't meet the minimum requirements.";
-      document.getElementById('result').innerText = message;
-      drawChart(result);
-      if (!result.compatible) {
-      getTopStores(); 
-      }
+        async function checkCompatibility() {
+            const cpu = document.getElementById('cpu').value;
+            const gpu = document.getElementById('gpu').value;
+            const ram = document.getElementById('ram').value;
+            const urlParams = new URLSearchParams(window.location.search);
+            const gid = urlParams.get('gid');
 
-    }
-
-    let compatibilityChart = null;
-
-    function drawChart(result) {
-      const ctx = document.getElementById('compatibilityChart').getContext('2d');
-    
-      if (compatibilityChart) {
-        compatibilityChart.destroy();
-      }
-    
-      compatibilityChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['CPU', 'GPU', 'RAM'],
-          datasets: [
-            {
-              label: 'User Scores',
-              data: [
-                result.user_scores.cpu,
-                result.user_scores.gpu,
-                result.user_scores.ram
-              ],
-              backgroundColor: 'rgba(75, 192, 192, 0.6)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1
-            },
-            {
-              label: 'Required Min Scores',
-              data: [
-                result.required_scores.min_cpu,
-                result.required_scores.min_gpu,
-                result.required_scores.min_ram
-              ],
-              backgroundColor: 'rgba(255, 99, 132, 0.6)',
-              borderColor: 'rgba(255, 99, 132, 1)',
-              borderWidth: 1
-            },
-            {
-              label: 'Required Max Scores',
-              data: [
-                result.required_scores.max_cpu,
-                result.required_scores.max_gpu,
-                result.required_scores.max_ram 
-              ],
-              backgroundColor: 'rgba(255, 159, 64, 0.6)',
-              borderColor: 'rgba(255, 159, 64, 1)',
-              borderWidth: 1
+            if (!cpu || !gpu || !ram) {
+                alert("Please fill in all fields.");
+                return;
             }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true
+
+            const res = await fetch('http://127.0.0.1:5000/check-compatibility', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    cpu,
+                    gpu,
+                    ram,
+                    gid: parseInt(gid)
+                })
+            });
+
+            const result = await res.json();
+            const message = result.compatible ?
+                "Your system can run the game!" :
+                "Your system doesn't meet the minimum requirements.";
+
+            document.getElementById('result').innerHTML = `<span class="gradient-text animate-pulse">${message}</span>`;
+            drawChart(result);
+            if (!result.compatible) {
+                getTopStores();
             }
-          }
+
         }
-      });
-    }
 
+        let compatibilityChart = null;
 
+        function drawChart(result) {
+            const ctx = document.getElementById('compatibilityChart').getContext('2d');
 
-async function getTopStores() {
-    const cpu = document.getElementById('cpu')?.value || "Ryzen 5 3400G";
-    const gpu = document.getElementById('gpu')?.value || "GTX 1660 Super";
-    const ram = document.getElementById('ram')?.value || "8GB DDR4 RAM";
+            if (compatibilityChart) {
+                compatibilityChart.destroy();
+            }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const gid = parseInt(urlParams.get('gid')) || 1;
+            // Gradient for User Scores
+            const gradientUser = ctx.createLinearGradient(0, 0, 400, 0);
+            gradientUser.addColorStop(0, "#fc72ff");
+            gradientUser.addColorStop(0.5, "#487bff");
+            gradientUser.addColorStop(1, "#fc72ff");
 
-    try {
-        const res = await fetch(`http://127.0.0.1:5000/get-basic-parts?gid=${gid}`);
-        if (!res.ok) {
-            throw new Error(`Server responded with status ${res.status}`);
+            // Gradient for Min Scores
+            const gradientMin = ctx.createLinearGradient(0, 0, 400, 0);
+            gradientMin.addColorStop(0, "#ff9aa2");
+            gradientMin.addColorStop(1, "#ff6f91");
+
+            // Gradient for Max Scores
+            const gradientMax = ctx.createLinearGradient(0, 0, 400, 0);
+            gradientMax.addColorStop(0, "#ffc371");
+            gradientMax.addColorStop(1, "#ff5f6d");
+
+            compatibilityChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['CPU', 'GPU', 'RAM'],
+                    datasets: [{
+                            label: 'User Scores',
+                            data: [
+                                result.user_scores.cpu,
+                                result.user_scores.gpu,
+                                result.user_scores.ram
+                            ],
+                            backgroundColor: gradientUser,
+                            borderRadius: 10,
+                            borderSkipped: false
+                        },
+                        {
+                            label: 'Required Min Scores',
+                            data: [
+                                result.required_scores.min_cpu,
+                                result.required_scores.min_gpu,
+                                result.required_scores.min_ram
+                            ],
+                            backgroundColor: gradientMin,
+                            borderRadius: 10,
+                            borderSkipped: false
+                        },
+                        {
+                            label: 'Required Max Scores',
+                            data: [
+                                result.required_scores.max_cpu,
+                                result.required_scores.max_gpu,
+                                result.required_scores.max_ram
+                            ],
+                            backgroundColor: gradientMax,
+                            borderRadius: 10,
+                            borderSkipped: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    layout: {
+                        padding: 10
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: "#ffffff",
+                                font: {
+                                    size: 14,
+                                    weight: 'bold',
+                                    family: 'Segoe UI'
+                                }
+                            },
+                            grid: {
+                                color: "#444"
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: "#ffffff",
+                                font: {
+                                    size: 14,
+                                    weight: 'bold',
+                                    family: 'Segoe UI'
+                                }
+                            },
+                            grid: {
+                                color: "#444"
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: "#ffffff",
+                                font: {
+                                    size: 13,
+                                    family: 'Segoe UI'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: "#1e1e2f",
+                            titleColor: "#ffffff",
+                            bodyColor: "#cccccc",
+                            borderColor: "#8f68ff",
+                            borderWidth: 1
+                        }
+                    }
+                }
+            });
         }
-        const products = await res.json();
-        console.log("🟡 Raw result from server:", products);
-        document.getElementById('result').textContent = `OK: ${products}`;
-        if (!products || !products.Productlinks) {
-            throw new Error("Missing 'Productlinks' in server response");
+
+        async function getTopStores() {
+            const cpu = document.getElementById('cpu')?.value;
+            const gpu = document.getElementById('gpu')?.value;
+            const ram = document.getElementById('ram')?.value;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const gid = parseInt(urlParams.get('gid')) || 1;
+
+            try {
+                // Send GID as a query param in GET request
+                const res = await fetch(`http://127.0.0.1:5000/get-basic-parts?gid=${gid}`);
+                if (!res.ok) {
+                    throw new Error(`Server responded with status ${res.status}`);
+                }
+
+                const products = await res.json();
+                console.log("🟡 Raw result from server:", products);
+
+                if (!products || !products.Productlinks) {
+                    throw new Error("Missing 'Productlinks' in server response");
+                }
+
+                console.log("✅ Fetched Productlinks:", products.Productlinks);
+
+                // Call the next function with productlinks
+                loadProductSuggestions(products.Productlinks);
+
+            } catch (error) {
+                console.error('❌ Error in getTopStores:', error);
+                document.getElementById('result').textContent = `Error: ${error.message}`;
+
+                if (error.response) {
+                    console.error("🔍 Status Code:", error.response.status);
+                    console.error("🔍 Response Body:", await error.response.text());
+                }
+            }
         }
-        console.log("✅ Fetched Productlinks:", products.Productlinks);
-        loadProductSuggestions(products.Productlinks);
 
-    } catch (error) {
-        console.error('❌ Error in getTopStores:', error);
-        document.getElementById('result').textContent = `Error: ${error.message}`;
-        if (error.response) {
-            console.error("🔍 Status Code:", error.response.status);
-            console.error("🔍 Response Body:", await error.response.text());
+        async function loadProductSuggestions(productLinksArray) {
+            const container = document.getElementById("product-suggestions");
+            const resultBox = document.getElementById("result");
+            container.innerHTML = `
+            <div class="loading-message">
+            <span class="gradient-text">Searching For Best Product Recommendation For Your PC<span class="dots"></span></span>
+            </div>
+            `;
+            const grouped = {
+                CPU: [],
+                GPU: [],
+                RAM: []
+            };
+
+            for (const storeLinks of productLinksArray) {
+                const store = storeLinks.store;
+
+                for (const component of ['CPU', 'GPU', 'RAM']) {
+                    const link = storeLinks[component];
+                    if (!link) continue;
+
+                    try {
+                        const res = await fetch(`http://127.0.0.1:5000/scrape-products?data=${link}`);
+                        if (!res.ok) continue;
+                        const product = await res.json();
+
+                        // Extract numeric price
+                        const priceValue = parseFloat(product.price.replace(/[^\d.]/g, ''));
+                        grouped[component].push({
+                            ...product,
+                            store,
+                            component,
+                            priceValue
+                        });
+                    } catch (e) {
+                        console.error(`❌ Failed to fetch ${component} from ${store}`, e);
+                    }
+                }
+            }
+            container.innerHTML += ``;
+            container.innerHTML += `<h3 style="width:100%">🛒 Product Suggestions to Run This Game</h3>`;
+
+            for (const component of ['CPU', 'GPU', 'RAM']) {
+                const products = grouped[component].sort((a, b) => a.priceValue - b.priceValue);
+                if (products.length === 0) continue;
+
+                const rowTitle = document.createElement('h4');
+                rowTitle.textContent = component;
+                container.appendChild(rowTitle);
+
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.flexWrap = 'wrap';
+                row.style.gap = '20px';
+                row.style.marginBottom = '40px';
+                row.style.alignItems = 'flex-start';
+
+                products.forEach(product => {
+                    const block = document.createElement('div');
+                    block.className = 'store-box';
+                    block.style.width = "200px";
+                    block.style.borderRadius = "16px";
+                    block.style.padding = "16px";
+                    block.style.boxSizing = "border-box";
+                    block.style.background = "linear-gradient(to bottom, #2e2e3a, #3a3a4d)";
+                    block.style.color = "#ffffff";
+                    block.style.boxShadow = "0 8px 24px rgba(0,0,0,0.2)";
+                    block.style.transition = "transform 0.3s ease, box-shadow 0.3s ease";
+                    block.style.cursor = "pointer";
+
+                    block.onmouseover = () => {
+                        block.style.transform = "translateY(-6px)";
+                        block.style.boxShadow = "0 12px 30px rgba(0, 0, 0, 0.3)";
+                    };
+
+                    block.onmouseout = () => {
+                        block.style.transform = "translateY(0)";
+                        block.style.boxShadow = "0 8px 24px rgba(0,0,0,0.2)";
+                    };
+                    block.innerHTML = `
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                        <img src="${product.image}" style="width:80%; height:80%; border-radius:5px; margin-bottom:2px;" />
+                        <h4 style="font-size:16px; margin:8px 0; min-height:40px;">${product.name}</h4>
+                        <p style="font-weight:bold; margin:6px 0;">${product.price}</p>
+                        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
+                        <button onclick="window.open('${product.link}', '_blank')" style="margin:6px 4px; padding:6px 12px; border:none; background-color:#007bff; color:white; border-radius:4px; cursor:pointer;">View Product</button>
+                        <button onclick="openMapSearch('${product.store}')" style="margin:6px 4px; padding:6px 12px; border:none; background-color:#007bff; color:white; border-radius:4px; cursor:pointer;">View on Map</button>
+                        </div>
+                        <p style="font-size:12px; color:#666;"><em>${product.store}</em></p>
+                        </div>
+                    `;
+                    row.appendChild(block);
+                });
+
+                container.appendChild(row);
+            }
         }
-    }
-}
 
-async function loadProductSuggestions(productLinksArray) {
-  const container = document.getElementById("product-suggestions");
-  const resultBox = document.getElementById("result");
-  container.innerHTML = '';
+        function openMapSearch(storeName) {
+            const url = `https://www.google.com/maps/search/${storeName}+near+me`;
+            window.open(url, '_blank');
+        }
 
-  const grouped = {
-    CPU: [],
-    GPU: [],
-    RAM: []
-  };
-
-  for (const storeLinks of productLinksArray) {
-    const store = storeLinks.store;
-    for (const component of ['CPU', 'GPU', 'RAM']) {
-      const link = storeLinks[component];
-      if (!link) continue;
-      try {
-        const res = await fetch(`http://127.0.0.1:5000/scrape-products?data=${link}`);
-        if (!res.ok) continue;
-        const product = await res.json();
-        const priceValue = parseFloat(product.price.replace(/[^\d.]/g, ''));
-        grouped[component].push({ ...product, store, component, priceValue });
-      } catch (e) {
-        console.error(`❌ Failed to fetch ${component} from ${store}`, e);
-      }
-    }
-  }
-  container.innerHTML += `<h3 style="width:100%">🛒 Product Suggestions to Run This Game</h3>`;
-  for (const component of ['CPU', 'GPU', 'RAM']) {
-    const products = grouped[component].sort((a, b) => a.priceValue - b.priceValue);
-    if (products.length === 0) continue;
-    const rowTitle = document.createElement('h4');
-    rowTitle.textContent = component;
-    container.appendChild(rowTitle);
-
-const row = document.createElement('div');
-row.style.display = 'flex';
-row.style.flexWrap = 'wrap';
-row.style.gap = 'auto';
-row.style.marginBottom = 'auto';
-row.style.alignItems = 'flex-start';
-
-    products.forEach(product => {
-      const block = document.createElement('div');
-      block.className = 'store-box';
-      block.style.width = "100px";
-block.style.border = "1px solid #ccc";
-block.style.borderRadius = "8px";
-block.style.padding = "10px";
-block.style.boxSizing = "border-box";
-block.style.backgroundColor = "#fdfdfd";
-block.style.boxShadow = "2px 2px 6px rgba(0,0,0,0.05)";
-      block.innerHTML = `
-  <div style="display: flex; flex-direction: column; align-items: center;">
-    <img src="${product.image}" style="width:100%; height:auto; border-radius:4px; margin-bottom:8px;" />
-    <h4 style="font-size:16px; margin:8px 0; min-height:40px;">${product.name}</h4>
-    <p style="font-weight:bold; margin:6px 0;">${product.price}</p>
-    <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
-      <button onclick="window.open('${product.link}', '_blank')" style="margin:6px 4px; padding:6px 12px; border:none; background-color:#007bff; color:white; border-radius:4px; cursor:pointer;">View Product</button>
-      <button onclick="openMapSearch('${product.store}')" style="margin:6px 4px; padding:6px 12px; border:none; background-color:#007bff; color:white; border-radius:4px; cursor:pointer;">View on Map</button>
-    </div>
-    <p style="font-size:12px; color:#666;"><em>${product.store}</em></p>
-  </div>
-`;
-      row.appendChild(block);
-    });
-
-    container.appendChild(row);
-  }
-}
-
-function openMapSearch(storeName) {
-    const url = `https://www.google.com/maps/search/${storeName}+near+me`;
-    window.open(url, '_blank'); 
-}
-
-    loadGameInfo();
-  </script>
+        loadGameInfo();
+    </script>
 
 </body>
+
 </html>
